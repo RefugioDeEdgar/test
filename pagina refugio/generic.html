@@ -1,0 +1,615 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Refugio: Los angelitos de Edgar</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<style>
+			.add-animal-btn {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				gap: 10px;
+				margin: 2rem auto;
+				font-size: 3rem;
+				width: 80px;
+				height: 80px;
+				border-radius: 50%;
+				background-color: #18bfef;
+				color: white;
+				border: none;
+				cursor: pointer;
+				transition: all 0.3s;
+				box-shadow: 0 4px 15px rgba(24, 191, 239, 0.3);
+			}
+			
+			.add-animal-btn:hover {
+				background-color: #1597c7;
+				transform: scale(1.1);
+			}
+			
+			.modal {
+				display: none;
+				position: fixed;
+				z-index: 10000;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0,0,0,0.7);
+				overflow-y: auto;
+			}
+			
+			.modal-content {
+				background-color: #ffffff;
+				margin: 50px auto;
+				padding: 40px;
+				border-radius: 8px;
+				width: 90%;
+				max-width: 600px;
+				position: relative;
+			}
+			
+			.close-modal {
+				position: absolute;
+				right: 20px;
+				top: 20px;
+				font-size: 30px;
+				font-weight: bold;
+				color: #aaa;
+				cursor: pointer;
+				line-height: 1;
+			}
+			
+			.close-modal:hover {
+				color: #000;
+			}
+			
+			.form-group {
+				margin-bottom: 20px;
+			}
+			
+			.form-group label {
+				display: block;
+				margin-bottom: 8px;
+				color: #212931;
+				font-weight: 600;
+			}
+			
+			.form-group input,
+			.form-group textarea {
+				width: 100%;
+				padding: 10px;
+				border: 2px solid #eeeeee;
+				border-radius: 4px;
+				font-family: inherit;
+			}
+			
+			.form-group input:focus,
+			.form-group textarea:focus {
+				border-color: #18bfef;
+				outline: none;
+			}
+			
+			.form-group textarea {
+				min-height: 100px;
+				resize: vertical;
+			}
+			
+			.error-msg {
+				background-color: #ff4444;
+				color: white;
+				padding: 10px;
+				border-radius: 4px;
+				margin-bottom: 15px;
+				display: none;
+			}
+			
+			.success-msg {
+				background-color: #18bfef;
+				color: white;
+				padding: 10px;
+				border-radius: 4px;
+				margin-bottom: 15px;
+				display: none;
+			}
+			
+			.image-preview-container {
+				margin-top: 10px;
+			}
+			
+			.image-preview-container img {
+				max-width: 100%;
+				max-height: 200px;
+				border-radius: 4px;
+			}
+			
+			.animals-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+				gap: 30px;
+				margin-top: 30px;
+			}
+			
+			.animal-card {
+				border: 2px solid #eeeeee;
+				border-radius: 8px;
+				overflow: hidden;
+				transition: transform 0.3s;
+			}
+			
+			.animal-card:hover {
+				transform: translateY(-5px);
+				box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+			}
+			
+			.animal-card img {
+				width: 100%;
+				height: 250px;
+				object-fit: cover;
+			}
+			
+			.animal-card-content {
+				padding: 20px;
+			}
+			
+			.animal-card h3 {
+				margin-bottom: 10px;
+				color: #212931;
+			}
+			
+			.animal-card p {
+				margin-bottom: 8px;
+				color: #666;
+			}
+			
+			.animal-story {
+				margin-top: 15px;
+				padding-top: 15px;
+				border-top: 1px solid #eeeeee;
+				color: #555;
+			}
+			
+			.delete-animal-btn {
+				margin-top: 15px;
+				background-color: #ff4444;
+				color: white;
+				border: none;
+				padding: 8px 16px;
+				border-radius: 4px;
+				cursor: pointer;
+				font-size: 0.9rem;
+			}
+			
+			.delete-animal-btn:hover {
+				background-color: #cc0000;
+			}
+			
+			.btn-center {
+				text-align: center;
+			}
+			
+			.loading {
+				text-align: center;
+				padding: 40px;
+				color: #666;
+			}
+		</style>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<a href="index.html" class="logo">Nuestros Angelitos</a>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul class="links">
+							<li class="active"><a href="index.html">Inicio</a></li>
+							<li><a href="generic.html">Nuestros Angelitos</a></li>
+							<li><a href="elements.html">Informacion</a></li>
+							<li><a href="visitanos.html">visitanos</a></li>
+						</ul>
+						<ul class="icons">
+    <li>
+        <a href="https://www.facebook.com/AngelitosdeEdgarRefugio" 
+           class="icon brands fa-facebook-f" 
+           target="_blank" 
+           rel="noopener noreferrer">
+            <span class="label">Facebook</span>
+        </a>
+    </li>
+
+    <li>
+        <a href="https://www.instagram.com/refugio_angelitos_de_edgar/" 
+           class="icon brands fa-instagram" 
+           target="_blank" 
+           rel="noopener noreferrer">
+            <span class="label">Instagram</span>
+        </a>
+    </li>
+		<li>
+        <a href="https://www.tiktok.com/@refugioangelitosdeedgar" 
+           class="icon brands fa-tiktok" 
+           target="_blank" 
+           rel="noopener noreferrer">
+            <span class="label">TikTok</span>
+        </a>
+    </li>
+    <li>
+        <a href="https://wa.me/59173107078" 
+           class="icon brands fa-whatsapp" 
+           target="_blank" 
+           rel="noopener noreferrer">
+            <span class="label">WhatsApp</span>
+        </a>
+</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							<section class="post">
+								<header class="major">
+									<h1>Conoce a <br />nuestros angelitos</h1>
+									<p>Cada uno tiene su propia historia de amor y esperanza</p>
+								</header>
+								
+								<div class="btn-center">
+									<button class="add-animal-btn" onclick="openModal()" title="Agregar nuevo angelito">
+										+
+									</button>
+								</div>
+								
+								<div id="loadingMessage" class="loading">Cargando angelitos...</div>
+								<div id="animalsContainer" class="animals-grid"></div>
+								
+								<div class="image main"><img src="images/pic01.jpg" alt="" /></div>
+
+							</section>
+
+					</div>
+
+<!-- Modal -->
+<div id="addAnimalModal" class="modal">
+	<div class="modal-content">
+		<span class="close-modal" onclick="closeModal()">&times;</span>
+		<h2>Agregar Nuevo Angelito</h2>
+		
+		<div id="errorMessage" class="error-msg"></div>
+		<div id="successMessage" class="success-msg"></div>
+		
+		<form id="animalForm">
+			<div class="form-group">
+				<label for="animalImage">Foto del Angelito *</label>
+				<input type="file" id="animalImage" accept="image/*" required>
+				<div id="imagePreviewContainer" class="image-preview-container" style="display:none;">
+					<img id="imagePreview" alt="Vista previa">
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="animalName">Nombre *</label>
+				<input type="text" id="animalName" required placeholder="Ej: Max">
+			</div>
+			
+			<div class="form-group">
+				<label for="animalAge">Edad *</label>
+				<input type="text" id="animalAge" required placeholder="Ej: 2 años">
+			</div>
+			
+			<div class="form-group">
+				<label for="animalBreed">Raza *</label>
+				<input type="text" id="animalBreed" required placeholder="Ej: Mestizo">
+			</div>
+			
+			<div class="form-group">
+				<label for="animalStory">Historia del Angelito *</label>
+				<textarea id="animalStory" required placeholder="Cuéntanos la historia..."></textarea>
+			</div>
+			
+			<div class="form-group">
+				<label for="adminPin">PIN de Administrador *</label>
+				<input type="password" id="adminPin" required placeholder="Ingrese el PIN">
+			</div>
+			
+			<ul class="actions special">
+				<li><input type="submit" value="Guardar Angelito" class="primary" /></li>
+			</ul>
+		</form>
+	</div>
+</div>
+
+
+
+				<!-- Copyright -->
+					<div id="copyright">
+						<ul><li></li><li>Design:Rizu </li></ul>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+			
+			<!-- Firebase -->
+			<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+			<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+			
+			<script>
+				const CORRECT_PIN = '5512';
+				
+				// CONFIGURACIÓN DE FIREBASE
+				const firebaseConfig = {
+					apiKey: "AIzaSyD8ndx4z5XDXLE3okQdboq602m86N2V7mc",
+					authDomain: "refugio-aab92.firebaseapp.com",
+					databaseURL: "https://refugio-aab92-default-rtdb.firebaseio.com",
+					projectId: "refugio-aab92",
+					storageBucket: "refugio-aab92.firebasestorage.app",
+					messagingSenderId: "69050463448",
+					appId: "1:69050463448:web:e4fa045d0fefb88ba693ad"
+				};
+				
+				// Inicializar Firebase
+				let app, database;
+				try {
+					app = firebase.initializeApp(firebaseConfig);
+					database = firebase.database();
+					console.log('Firebase inicializado correctamente');
+				} catch (error) {
+					console.error('Error al inicializar Firebase:', error);
+					alert('Error de configuración. Por favor contacta al administrador.');
+				}
+				
+				// Función para comprimir y redimensionar imagen
+				function compressImage(file, maxWidth = 1200, quality = 0.8) {
+					return new Promise((resolve, reject) => {
+						const reader = new FileReader();
+						reader.readAsDataURL(file);
+						reader.onload = function(event) {
+							const img = new Image();
+							img.src = event.target.result;
+							img.onload = function() {
+								const canvas = document.createElement('canvas');
+								let width = img.width;
+								let height = img.height;
+								
+								// Redimensionar si es muy grande
+								if (width > maxWidth) {
+									height = (height * maxWidth) / width;
+									width = maxWidth;
+								}
+								
+								canvas.width = width;
+								canvas.height = height;
+								
+								const ctx = canvas.getContext('2d');
+								ctx.drawImage(img, 0, 0, width, height);
+								
+								// Convertir a JPEG con calidad ajustable
+								canvas.toBlob(
+									function(blob) {
+										const reader = new FileReader();
+										reader.readAsDataURL(blob);
+										reader.onloadend = function() {
+											const base64 = reader.result;
+											// Verificar tamaño final
+											const sizeInMB = (base64.length * 0.75) / (1024 * 1024);
+											console.log(`Imagen comprimida: ${sizeInMB.toFixed(2)}MB`);
+											resolve(base64);
+										};
+									},
+									'image/jpeg',
+									quality
+								);
+							};
+							img.onerror = reject;
+						};
+						reader.onerror = reject;
+					});
+				}
+				
+				// Abrir modal
+				function openModal() {
+					document.getElementById('addAnimalModal').style.display = 'block';
+					document.getElementById('errorMessage').style.display = 'none';
+					document.getElementById('successMessage').style.display = 'none';
+				}
+				
+				// Cerrar modal
+				function closeModal() {
+					document.getElementById('addAnimalModal').style.display = 'none';
+					document.getElementById('animalForm').reset();
+					document.getElementById('imagePreviewContainer').style.display = 'none';
+				}
+				
+				// Vista previa de imagen
+				document.getElementById('animalImage').addEventListener('change', function(e) {
+					const file = e.target.files[0];
+					if (file) {
+						const reader = new FileReader();
+						reader.onload = function(event) {
+							document.getElementById('imagePreview').src = event.target.result;
+							document.getElementById('imagePreviewContainer').style.display = 'block';
+						}
+						reader.readAsDataURL(file);
+					}
+				});
+				
+				// Enviar formulario
+				document.getElementById('animalForm').addEventListener('submit', async function(e) {
+					e.preventDefault();
+					
+					const errorMsg = document.getElementById('errorMessage');
+					const successMsg = document.getElementById('successMessage');
+					
+					errorMsg.style.display = 'none';
+					successMsg.style.display = 'none';
+					
+					const pin = document.getElementById('adminPin').value;
+					
+					if (pin !== CORRECT_PIN) {
+						errorMsg.textContent = 'PIN incorrecto. No tienes permisos para agregar angelitos.';
+						errorMsg.style.display = 'block';
+						return;
+					}
+					
+					const imageFile = document.getElementById('animalImage').files[0];
+					if (!imageFile) {
+						errorMsg.textContent = 'Por favor selecciona una imagen.';
+						errorMsg.style.display = 'block';
+						return;
+					}
+					
+					// Mostrar mensaje de carga
+					successMsg.textContent = 'Procesando y comprimiendo imagen...';
+					successMsg.style.display = 'block';
+					
+					try {
+						// Comprimir imagen automáticamente
+						const imageBase64 = await compressImage(imageFile, 1200, 0.8);
+						
+						// Verificar tamaño final (Base64 es ~33% más grande que el archivo original)
+						const finalSizeInMB = (imageBase64.length * 0.75) / (1024 * 1024);
+						
+						if (finalSizeInMB > 8) {
+							errorMsg.textContent = `La imagen sigue siendo muy grande (${finalSizeInMB.toFixed(2)}MB). Por favor usa una imagen más pequeña o de menor resolución.`;
+							errorMsg.style.display = 'block';
+							successMsg.style.display = 'none';
+							return;
+						}
+						
+						successMsg.textContent = 'Guardando angelito...';
+						
+						const timestamp = Date.now();
+						
+						// Guardar datos en Firebase Database
+						const animal = {
+							id: timestamp,
+							image: imageBase64,
+							name: document.getElementById('animalName').value,
+							age: document.getElementById('animalAge').value,
+							breed: document.getElementById('animalBreed').value,
+							story: document.getElementById('animalStory').value,
+							dateAdded: new Date().toISOString()
+						};
+						
+						try {
+							await database.ref('angelitos/' + timestamp).set(animal);
+							
+							successMsg.textContent = '¡Angelito agregado exitosamente!';
+							setTimeout(() => {
+								closeModal();
+								displayAnimals();
+							}, 1500);
+						} catch (error) {
+							console.error('Error al guardar:', error);
+							if (error.message.includes('10485760')) {
+								errorMsg.textContent = 'La imagen es muy grande para la base de datos. Por favor usa una imagen más pequeña (recomendado: menos de 5MB).';
+							} else {
+								errorMsg.textContent = 'Error al guardar: ' + error.message;
+							}
+							errorMsg.style.display = 'block';
+							successMsg.style.display = 'none';
+						}
+						
+					} catch (error) {
+						console.error('Error al procesar imagen:', error);
+						errorMsg.textContent = 'Error al procesar la imagen: ' + error.message;
+						errorMsg.style.display = 'block';
+						successMsg.style.display = 'none';
+					}
+				});
+				
+				// Eliminar animal
+				async function deleteAnimal(id) {
+					const pin = prompt('Ingrese el PIN de administrador para eliminar:');
+					
+					if (pin !== CORRECT_PIN) {
+						alert('PIN incorrecto');
+						return;
+					}
+					
+					if (confirm('¿Estás seguro de eliminar este angelito?')) {
+						try {
+							// Eliminar de Database
+							await database.ref('angelitos/' + id).remove();
+							
+							alert('Angelito eliminado exitosamente');
+							displayAnimals();
+						} catch (error) {
+							console.error('Error:', error);
+							alert('Error al eliminar: ' + error.message);
+						}
+					}
+				}
+				
+				// Mostrar animales
+				async function displayAnimals() {
+					const container = document.getElementById('animalsContainer');
+					const loading = document.getElementById('loadingMessage');
+					
+					try {
+						const snapshot = await database.ref('angelitos').once('value');
+						const animals = [];
+						
+						snapshot.forEach((childSnapshot) => {
+							animals.push(childSnapshot.val());
+						});
+						
+						loading.style.display = 'none';
+						
+						if (animals.length === 0) {
+							container.innerHTML = '<p style="text-align:center; color:#666; padding:40px;">Aún no hay angelitos registrados.</p>';
+							return;
+						}
+						
+						// Ordenar por fecha (más recientes primero)
+						animals.sort((a, b) => b.id - a.id);
+						
+						container.innerHTML = animals.map(animal => `
+							<div class="animal-card">
+								<img src="${animal.image}" alt="${animal.name}">
+								<div class="animal-card-content">
+									<h3>${animal.name}</h3>
+									<p><strong>Edad:</strong> ${animal.age}</p>
+									<p><strong>Raza:</strong> ${animal.breed}</p>
+									<div class="animal-story">${animal.story}</div>
+									<button class="delete-animal-btn" onclick="deleteAnimal(${animal.id})">Eliminar</button>
+								</div>
+							</div>
+						`).join('');
+						
+					} catch (error) {
+						console.error('Error al cargar angelitos:', error);
+						loading.textContent = 'Error al cargar los angelitos. Verifica la configuración de Firebase.';
+					}
+				}
+				
+				// Cerrar modal al hacer clic fuera
+				window.onclick = function(event) {
+					const modal = document.getElementById('addAnimalModal');
+					if (event.target === modal) {
+						closeModal();
+					}
+				}
+				
+				// Cargar angelitos al iniciar
+				displayAnimals();
+			</script>
+
+	</body>
+</html>
